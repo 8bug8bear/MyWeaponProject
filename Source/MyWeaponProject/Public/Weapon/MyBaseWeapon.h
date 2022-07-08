@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/Character.h"
+#include "MyInterfaces/CharacterInterface.h"
 #include "MyBaseWeapon.generated.h"
 
 UCLASS()
@@ -50,6 +51,8 @@ public:
 		ACharacter* CharRef;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 		FName attachSktName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
+		FName detachSktName;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 		float useRate;
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")

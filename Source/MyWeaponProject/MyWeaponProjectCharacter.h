@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Weapon/MyBaseWeapon.h"
 #include "MyInterfaces/CharacterInterface.h"
+#include "MyComponents/WeaponMenagerComponent.h"
 #include "MyWeaponProjectCharacter.generated.h"
 
 class UInputComponent;
@@ -36,6 +36,9 @@ class AMyWeaponProjectCharacter : public ACharacter, public ICharacterInterface
 	/** Motion controller (left hand) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UMotionControllerComponent* L_MotionController;
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWeaponMenagerComponent* WeaponMeneger;
 
 public:
 	AMyWeaponProjectCharacter();
@@ -108,16 +111,11 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	//Weapon
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-		TSubclassOf<AMyBaseWeapon> UsingWeaponClass;
-
-	UPROPERTY()
-	AMyBaseWeapon* WeaponUsed;
-
 	UCameraComponent* GetCameraRef() override
 	{
 		return FirstPersonCameraComponent;
 	}
+
+	USkeletalMeshComponent* GetGameMesh() override;
 };
 

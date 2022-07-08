@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Weapon/MyBaseWeapon.h"
 #include "MyComponents/LineTraceFireComponent.h"
-#include "MyInterfaces/CharacterInterface.h"
 #include "BowC.generated.h"
 
 /**

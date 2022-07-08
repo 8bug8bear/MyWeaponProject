@@ -7,8 +7,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
-#include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 
@@ -31,6 +29,7 @@ AMyWeaponProjectCharacter::AMyWeaponProjectCharacter()
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+	
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
@@ -53,29 +52,19 @@ AMyWeaponProjectCharacter::AMyWeaponProjectCharacter()
 	L_MotionController = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("L_MotionController"));
 	L_MotionController->SetupAttachment(RootComponent);
 
+	WeaponMeneger = CreateDefaultSubobject <UWeaponMenagerComponent>(TEXT("WeaponMenegerComponent"));
+	WeaponMeneger->SetIsReplicated(true);
+
+	bUseControllerRotationYaw = true;
+
+	Mesh1P->bOnlyOwnerSee = true;
+	GetMesh()->bOwnerNoSee= true;
 }
 
 void AMyWeaponProjectCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
-	FVector spawnLocation = GetRootComponent()->GetComponentLocation();
-
-	FRotator spawnRotation = GetRootComponent()->GetComponentRotation();
-
-	FActorSpawnParameters localSpawnParametrs;
-
-	localSpawnParametrs.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-
-	WeaponUsed = GetWorld()->SpawnActor<AMyBaseWeapon>(UsingWeaponClass, spawnLocation, spawnRotation, localSpawnParametrs);
-
-
-	FAttachmentTransformRules transformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true);
-
-	WeaponUsed->AttachToComponent(Mesh1P, transformRules, WeaponUsed->attachSktName);
-
-	WeaponUsed->CharRef = this;
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -107,16 +96,29 @@ void AMyWeaponProjectCharacter::SetupPlayerInputComponent(class UInputComponent*
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AMyWeaponProjectCharacter::LookUpAtRate);
 }
 
+USkeletalMeshComponent* AMyWeaponProjectCharacter::GetGameMesh()
+{
+	if (IsLocallyControlled())
+	{
+		return Mesh1P;
+	}
+	else
+	{
+		return GetMesh();
+	}
+	
+}
+
 void AMyWeaponProjectCharacter::OnFire()
 {
 	UE_LOG(LogTemp, Log, TEXT("use. \n"));
-	WeaponUsed->Use();
+	WeaponMeneger->UseWeapon();
 }
 
 void AMyWeaponProjectCharacter::StopFire()
 {
 	UE_LOG(LogTemp, Log, TEXT("StopUse. \n"));
-	WeaponUsed->StopUse();
+	WeaponMeneger->StopUseWeapon();
 }
 
 

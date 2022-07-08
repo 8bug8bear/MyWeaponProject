@@ -25,4 +25,6 @@ class MYWEAPONPROJECT_API ICharacterInterface
 public:
 
 	virtual UCameraComponent* GetCameraRef() { return nullptr; }
+
+	virtual USkeletalMeshComponent* GetGameMesh(){ return nullptr; }
 };
